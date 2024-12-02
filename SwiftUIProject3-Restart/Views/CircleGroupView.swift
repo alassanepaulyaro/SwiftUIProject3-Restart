@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct CircleGroupView: View {
-    @State  var ShapeColor: Color
-    @State  var ShapeOpacity: Double
-    @State  var isAnimating: Bool = false
-    
+    @State var ShapeColor: Color
+    @State var ShapeOpacity: Double
+    @State var isAnimating: Bool = false
+
     var body: some View {
         ZStack {
             Circle()

@@ -10,7 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @AppStorage("onboarding") var isOnboardingViewActive: Bool = false
     @State private var isAnimating: Bool = false
-   
+
     var body: some View {
         VStack(spacing: 20) {
 
@@ -25,8 +25,7 @@ struct HomeView: View {
                     .animation(
                         Animation
                             .easeInOut(duration: 4)
-                            .repeatForever()
-                        , value: isAnimating
+                            .repeatForever(), value: isAnimating
                     )
             }
 
@@ -45,7 +44,8 @@ struct HomeView: View {
                 .font(.largeTitle)
 
             Button(action: {
-                withAnimation{
+                withAnimation {
+                    playSound(sound: "success", type: "m4a")
                     isOnboardingViewActive = true
                 }
             }) {

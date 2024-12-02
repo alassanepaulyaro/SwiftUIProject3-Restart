@@ -14,8 +14,10 @@ struct OnboardingView: View {
     @State private var isAnimating: Bool = false
     @State private var imageOffset: CGSize = .zero
     @State private var indicatorOpacity: Double = 1.0
-    @State private var textTitle : String = "Share."
-    
+    @State private var textTitle: String = "Share."
+
+    let hapticFeedback = UINotificationFeedbackGenerator()
+
     var body: some View {
         ZStack {
             Color("ColorBlue").ignoresSafeArea(.all, edges: .all)
@@ -44,36 +46,36 @@ struct OnboardingView: View {
                     .padding(.horizontal, 10)
                 }
                 .opacity(isAnimating ? 1 : 0)
-                .offset(y: isAnimating ?  0 : -40)
+                .offset(y: isAnimating ? 0 : -40)
                 .animation(.easeOut(duration: 1), value: isAnimating)
 
                 ZStack {
 
                     CircleGroupView(ShapeColor: .white, ShapeOpacity: 0.2)
                         .offset(x: imageOffset.width * -1)
-                        .blur(radius: abs(imageOffset.width/5))
+                        .blur(radius: abs(imageOffset.width / 5))
                         .animation(.easeOut(duration: 1), value: isAnimating)
-                    
+
                     Image("character-1")
                         .resizable()
                         .scaledToFit()
                         .opacity(isAnimating ? 1 : 0)
                         .animation(.easeOut(duration: 0.5), value: isAnimating)
-                        .offset(x: imageOffset.width * 1.2, y : 0)
+                        .offset(x: imageOffset.width * 1.2, y: 0)
                         .rotationEffect(.degrees(imageOffset.width / 20))
                         .gesture(
                             DragGesture()
                                 .onChanged { gesture in
                                     if abs(imageOffset.width) <= 150 {
-                                        imageOffset =  gesture.translation
-                                        
+                                        imageOffset = gesture.translation
+
                                         withAnimation(.linear(duration: 0.2)) {
                                             indicatorOpacity = 0
-                                            textTitle =  "Give."
+                                            textTitle = "Give."
                                         }
                                     }
                                 }
-                                .onEnded{ _ in
+                                .onEnded { _ in
                                     imageOffset = .zero
                                     withAnimation(.linear(duration: 0.25)) {
                                         indicatorOpacity = 1
@@ -87,12 +89,12 @@ struct OnboardingView: View {
                     Image(systemName: "arrow.left.and.right.circle")
                         .font(.system(size: 44, weight: .ultraLight))
                         .foregroundColor(.white)
-                        .offset(y:20)
+                        .offset(y: 20)
                         .opacity(indicatorOpacity)
-                        .animation(.easeOut(duration: 1).delay(2), value: isAnimating)
-                    ,alignment: .bottom
+                        .animation(
+                            .easeOut(duration: 1).delay(2), value: isAnimating),
+                    alignment: .bottom
                 )
-                
 
                 Spacer()
 
@@ -143,9 +145,15 @@ struct OnboardingView: View {
                                 .onEnded { _ in
                                     withAnimation(.easeOut(duration: 0.4)) {
                                         if buttonOffset > buttonWidth / 2 {
+                                            hapticFeedback.notificationOccurred(
+                                                .success)
+                                            playSound(
+                                                sound: "chimeup", type: "mp3")
                                             buttonOffset = buttonWidth - 80
                                             isOnboardingViewActive = false
                                         } else {
+                                            hapticFeedback.notificationOccurred(
+                                                .warning)
                                             buttonOffset = 0
                                         }
                                     }
@@ -159,7 +167,7 @@ struct OnboardingView: View {
                 .frame(width: buttonWidth, height: 80, alignment: .center)
                 .padding()
                 .opacity(isAnimating ? 1 : 0)
-                .offset(y : isAnimating ? 0 : 40)
+                .offset(y: isAnimating ? 0 : 40)
                 .animation(.easeOut(duration: 1), value: isAnimating)
 
             }
@@ -167,6 +175,7 @@ struct OnboardingView: View {
         .onAppear(perform: {
             isAnimating = true
         })
+        .preferredColorScheme(.dark)
     }
 }
 
